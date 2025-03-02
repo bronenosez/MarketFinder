@@ -1,0 +1,11 @@
+<svg className="filter__price" width="40.000000" height="40.000000" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+	                    <defs>
+	                    	<clipPath id="clip15_11">
+	                    		<rect id="sort" width="40.000000" height="40.000000" fill="white" fill-opacity="0"/>
+	                    	</clipPath>
+	                    </defs>
+	                    <rect id="sort" width="40.000000" height="40.000000" fill="#FFFFFF" fill-opacity="0"/>
+	                    <g clip-path="url(#clip15_11)">
+	                    	<path id="矢量 67" d="M5 30L15 30L15 26.66L5 26.66L5 30ZM5 10L5 13.33L35 13.33L35 10L5 10ZM5 21.66L25 21.66L25 18.33L5 18.33L5 21.66Z" fill="#444444" fill-opacity="1.000000" fill-rule="evenodd"/>
+	                    </g>
+</svg>

@@ -1,0 +1,65 @@
+header {
+    height: 80px;
+    background-color: #FFF;
+    
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+.logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 10px;
+    
+}
+.logo p{
+    font-family: Ubuntu;
+    font-size: 36px;
+}
+.info {
+    cursor: pointer;
+    transition: all ease-in-out .2s;
+}
+.info:hover {
+    scale: 1.05;
+}
+.header_wrap {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 50px;
+}
+.autorization {
+    display: flex;
+    flex-direction: row;
+    column-gap: 25px;
+    font-size: 26px;
+    font-family: Ubuntu;
+}
+
+.autorization p {
+    text-decoration:none; /*Убираем стандартное подчёркивание ссылки если оно ещё не убрано*/
+    display: inline-block; /*делаем чтобы наша ссылка из строчного элемента превратилась в строчно-блочный*/
+    line-height: 1; /*Задаём высоту строки (можно в пикселях)*/
+    color:#000000;/*Задаём цвет ссылки*/
+    cursor: pointer;
+}
+.autorization p:after {
+    display: block; /*превращаем его в блочный элемент*/
+    content: ""; /*контента в данном блоке не будет поэтому в кавычках ничего не ставим*/
+    height: 1.5px; /*задаём высоту линии*/
+    width: 0%; /*задаём начальную ширину элемента (линии)*/
+    background-color: #000000; /*цвет фона элемента*/
+    transition: width 0.4s ease-in-out; /*данное свойство отвечает за плавное изменение ширины. Здесь можно задать время анимации в секундах (в данном случае задано 0.4 секунды)*/
+}
+.autorization p:hover:after,
+.autorization p:focus:after {
+width: 100%;
+}

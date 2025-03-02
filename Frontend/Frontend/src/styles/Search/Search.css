@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+.Search {
+    display: flex;
+    flex-direction: column;
+    row-gap: 60px;
+}
+
+.products {
+    display: flex;
+    flex-direction: column;
+    row-gap: 50px;
+}
+.results {
+    font-weight: 400;
+    font-size: 36px;
+}
+
+.products_head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.filter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 20px;
+    background-color: rgb(234, 234, 234);
+    padding: 5px 10px;
+    border-radius: 15px;
+}
+.filter img {
+    transition: all ease-in-out .3s;
+    cursor: pointer;
+}
+.filter img:hover {
+    scale: 1.05;
+}
+.filer img:click {
+    scale: 1.1;
+}
+.items {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+    background-color: rgb(234, 234, 234);
+    padding: 20px;
+    border-radius: 25px;
+    row-gap: 15px;
+}
+.product {
+    display: flex;
+    background-color: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+}
+.product_text {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 25px 20px;
+    row-gap: 30px;
+}
+.product__name {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    justify-content: space-between
+}
+.product_text h1{
+    
+    font-weight: 400;
+}
+.product__name_p {
+    font-weight: 300;
+    font-size: 22px;
+}
+.product img {
+    width: 300px;
+    height: 100%;
+    min-height: 300px;
+    object-fit: cover;
+}
+.rate {
+    font-family: "Roboto", sans-serif;
+    display: flex;
+    align-items: center;
+    column-gap: 12px;
+    font-size: 20px;
+}
+.rate img {
+    width: 25px;
+    height: 25px;
+}
+.store {
+    font-weight: 400;
+    font-size: 20px;
+}
+.product__p {
+    font-family: "Roboto", sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 21px;
+    letter-spacing: 0px;
+    max-height: 85px;
+    overflow: hidden;
+}
