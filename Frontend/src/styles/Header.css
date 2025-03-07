@@ -63,3 +63,88 @@ header {
 .autorization p:focus:after {
 width: 100%;
 }
+
+/* how it works section */
+
+.howItWorks {
+    position: absolute;
+    top: 120px;
+    right: 100px;
+
+
+    display: flex;
+    flex-flow: column wrap;
+    width: 500px;
+    height: 250px;
+    justify-content: space-between;
+    
+    box-sizing: border-box;
+    border: 1px solid rgb(0, 0, 0);
+    border-radius: 20px;
+    background: rgb(247, 247, 247);
+
+    padding: 15px 30px;
+}
+.howItWorks__wrap {
+    position: relative;
+    display: flex;
+    flex-flow: column wrap;
+}
+.howItWorks__text {
+    display: flex;
+    flex-flow: column wrap;
+    row-gap: 20px;
+    text-align: center;
+}
+.howItWorks__text h1 {
+    font-family: Ubuntu;
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 34px;
+}
+.howItWorks__text p {
+    font-family: Ubuntu;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 28px;
+    letter-spacing: 0px;
+    text-align: justify;    
+}
+.howItWorks button {
+    cursor: pointer;
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4;
+    padding: 12px 17px;
+    color: #FFF;
+    width: fit-content;
+
+    border: none;
+    border-radius: 4px;
+    background: rgb(108, 117, 125);
+
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 17px;
+    letter-spacing: 0px;
+    text-align: left;
+}
+.howItWorks__cross {
+    cursor: pointer;
+    position: absolute;
+    top: 25px;
+    right: 30px;
+}
+.howItWorks__cross, .howItWorks button {
+    scale: .98;
+    transition: scale ease-in-out .2s;
+}
+.howItWorks__cross:hover, .howItWorks button:hover {
+    scale: 1;
+}

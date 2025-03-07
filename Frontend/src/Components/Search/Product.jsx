@@ -1,5 +1,4 @@
 import stockImg from "../../img/stock.png";
-import testImg from '../../img/image.png'
 
 function Product({ h1 = "Iphone", p = "Cool phone", rate = 0, store = 'Apple', price = 0 }) {
     return (
