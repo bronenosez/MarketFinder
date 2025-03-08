@@ -66,6 +66,33 @@ class Parser {
         } 
     }
 
+    async searchByLink(productUrl) {
+        try {
+            await this.driver.get(productUrl);
+
+            await this.driver.executeScript("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});");
+    
+            await this.driver.sleep(this.getRandomDelay());
+
+            const pageSource = await this.driver.getPageSource();
+            
+            const $ = cheerio.load(pageSource);
+            
+            let item = {};
+            
+            item.name = $('[data-widget="webProductHeading"]').find('h1.tsHeadline550Medium').text().trim();
+            item.priceWithOzonCard = $('[data-widget="webPrice"]').find('span:contains("c Ozon Картой")').parent().children().first().find('span').first().text().trim();
+            item.priceWithoutOzonCard = $('[data-widget="webPrice"]').find('span:contains("без Ozon Карты")').parent().parent().first().find('span').first().text().trim();
+            
+            console.log('Товар: ', item);
+
+            return item;
+        } catch (error) {
+            console.error('Ошибка:', error);
+            return [];
+        }
+    }
+
     async close() {
         this.driver.quit();
     }

@@ -4,15 +4,20 @@ import SearchService from "../services/searchService.js";
 class SearchController {
     static async searchProducts(request, response, next) {
         try {
-            const productName = request.params.productName;
+            const { productName, productLink } = request.query;
 
-            if (!productName || productName.trim() === '') {
-                return next(ApiError.badRequest('productName is missing or empty.'));
+            if (!productName && !productLink) {
+                return next(ApiError.badRequest('productName or productLink is missing or empty.'));
             }
 
-            const products = await SearchService.searchProducts(productName);
+            let products;
+            if (productName) {
+                products = await SearchService.searchProducts(productName);
+            } else if (productLink) {
+                products = await SearchService.searchByLink(productLink);
+            }
             
-
+            
             response.json({message: "Product found", products});
         } catch (error) {
             next(error);

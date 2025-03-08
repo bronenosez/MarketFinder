@@ -5,7 +5,7 @@ import { Router } from 'express';
 
 const searchRouter = Router();
 
-searchRouter.post('/:productName', SearchController.searchProducts);
+searchRouter.post('/', SearchController.searchProducts);
 
 
 export default searchRouter;

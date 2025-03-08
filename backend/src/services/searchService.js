@@ -8,6 +8,14 @@ class SearchService {
 
         return data;
     }
+
+    static async searchByLink(productUrl) {
+        const parser = new Parser();
+        const data = await parser.searchByLink(productUrl);
+        await parser.close();
+
+        return data;
+    }
 }
 
 export default SearchService;
