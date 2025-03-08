@@ -1,4 +1,4 @@
-import Header from "../Components/Header/Header";
+import Header from "../Components/Header";
 import SearchBar from "../Components/Search/SearchBar";
 import Products from "../Components/Search/Products";
 
