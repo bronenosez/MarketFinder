@@ -1,4 +1,13 @@
+
+.modal_wrap.active {
+    width: 100vw;
+    height: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
 .wrap {
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     width: fit-content;
