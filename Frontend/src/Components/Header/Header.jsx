@@ -2,7 +2,7 @@ import "../../styles/Header.css";
 import '../../styles/index.css';
 import logo__basket from "../../img/logo__basket-svg.svg";
 import info from "../../img/info.svg";
-import Modal from "./Modal";
+import Modal from "../Modal";
 import {useState} from 'react';
 
 export default function Header () {

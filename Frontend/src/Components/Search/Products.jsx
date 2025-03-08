@@ -4,15 +4,40 @@ import filter__rating from "../../img/filter__rating.svg";
 
 
 export default function Products () {
-    const productsCount = 2;
-    const h1 = 'iphone 13';
-    const p = 'Этот стильный и удобный товар станет отличным дополнением вашего повседневного образа. Он сочетает в себе качество, функциональность и элегантный дизайн, подходящий для любых ситуаций.Этот стильный и удобный товар станет отличным дополнением вашего повседневного образа. Он сочетает в себе качество, функциональность и элегантный дизайн, подходящий для любых ситуаций.'
+    const randomInt = Math.floor(Math.random() * 10)
+    let itemsInfo = [
+        {
+            h1: 'Iphone',
+            p: `Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Rem ratione amet neque doloremque dolore veniam error et repudiandae
+                repellendus praesentium porro, minima reiciendis eos a officiis totam rerum similique est!`,
+            rate: "4.7",
+            store: 'Eldorado',
+            price: '3000'
+        },
+
+        {
+            h1: 'MacBook',
+            price: '40000'
+        }
+    ]
+    
+    itemsInfo = itemsInfo.concat(new Array(randomInt).fill({}));
+
+
+    const defaultText = {
+        h1: '...',
+        p:'...',
+        rate: '...',
+        store: '...',
+        price: '...'
+    }
 
     return (
         <div className="container products">         
 
             <div className="products_head">
-                <p className="results">Результаты ({productsCount})</p> 
+                <p className="results">Результаты ({itemsInfo.length})</p> 
                 <div className="filter">
                     <img src={filter__price} alt="" />
                     <img src={filter__rating} alt="" />
@@ -20,8 +45,16 @@ export default function Products () {
             </div>
 
             <div className="items">
-              <Product  p={p} />  
-              <Product h1={h1} />  
+                {itemsInfo.map((item, index) => (
+                    <Product 
+                        key={index}
+                        h1={item.h1 || defaultText.h1}
+                        p={item.p || defaultText.p}
+                        rate={item.rate || defaultText.rate}
+                        store={item.store || defaultText.store}
+                        price={item.price || defaultText.price}
+                    />
+                ))}
             </div>
             
         </div>
