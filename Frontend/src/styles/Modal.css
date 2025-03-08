@@ -1,0 +1,18 @@
+.wrap {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: fit-content;
+    opacity: 0;
+    transition: opacity .3s;
+}
+.wrap * {
+    scale: 0;
+    transition: scale .2s ease-out;
+}
+.wrap.active {
+    opacity: 1;
+}
+.wrap.active *{
+    scale: 1;
+}
