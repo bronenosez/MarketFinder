@@ -1,32 +1,10 @@
-import { Builder } from "selenium-webdriver";
-import chrome from 'selenium-webdriver/chrome.js';
 import * as cheerio from 'cheerio';
-import path from "path";
-import { fileURLToPath } from 'url';
-
-
-const __filename = fileURLToPath(import.meta.url);
-
-const __dirname = path.dirname(__filename);
-console.log(__dirname);
-const chromeDriverPath = path.join(__dirname, 'undetected_chromedriver.exe');
+import driverPool from './driverPool.js';
 
 
 class Parser {
     constructor() {
-        const chromeOptions = new chrome.Options();
-        chromeOptions.addArguments('--headless=new');
-        chromeOptions.addArguments('--enable-javascript');
-        chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
-        chromeOptions.excludeSwitches(['enable-automation']);
-
-        chromeOptions.addArguments('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.124 Safari/537.36');
-
-        this.driver = new Builder()
-            .forBrowser('chrome')
-            .setChromeOptions(chromeOptions)
-            .setChromeService(new chrome.ServiceBuilder(chromeDriverPath))
-            .build();
+        this.driver = driverPool.getDriver(); 
     }
 
     getRandomDelay(min = 5540, max = 7000) {

@@ -4,7 +4,6 @@ class SearchService {
     static async searchProducts(productName) {
         const parser = new Parser();
         const data = await parser.searchProducts(productName);
-        await parser.close();
 
         return data;
     }
@@ -12,7 +11,6 @@ class SearchService {
     static async searchByLink(productUrl) {
         const parser = new Parser();
         const data = await parser.searchByLink(productUrl);
-        await parser.close();
 
         return data;
     }
