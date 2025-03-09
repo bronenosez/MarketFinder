@@ -1,19 +1,21 @@
 import Parser from "../utils/parser.js";
 
 class SearchService {
-    static async searchProducts(productName) {
-        const parser = new Parser();
-        const data = await parser.searchProducts(productName);
+  static async searchProducts(productName) {
+    const site = "wildberries";
+    const parser = new Parser().getParser(site);
+    const data = await parser.searchProducts(productName);
 
-        return data;
-    }
+    return data;
+  }
 
-    static async searchByLink(productUrl) {
-        const parser = new Parser();
-        const data = await parser.searchByLink(productUrl);
+  static async searchByLink(productUrl) {
+    const site = "ozon";
+    const parser = new Parser().getParser(site);
+    const data = await parser.searchByLink(productUrl);
 
-        return data;
-    }
+    return data;
+  }
 }
 
 export default SearchService;
