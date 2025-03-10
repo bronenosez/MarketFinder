@@ -20,11 +20,11 @@ class DriverPool {
 
   createDriver() {
     const chromeOptions = new chrome.Options();
-    // chromeOptions.addArguments("--headless=new");
+    chromeOptions.addArguments("--headless=new");
     chromeOptions.addArguments("--enable-javascript");
     chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
-    chromeOptions.add_argument("--ignore-certificate-errors");
-    chromeOptions.add_argument("--ignore-ssl-errors");
+    chromeOptions.addArguments("--ignore-certificate-errors");
+    chromeOptions.addArguments("--ignore-ssl-errors");
     chromeOptions.excludeSwitches(["enable-automation"]);
     chromeOptions.addArguments(
       "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.124 Safari/537.36"

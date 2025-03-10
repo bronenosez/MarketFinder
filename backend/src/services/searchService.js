@@ -2,7 +2,7 @@ import Parser from "../utils/parser.js";
 
 class SearchService {
   static async searchProducts(productName) {
-    const site = "wildberries";
+    const site = "ozon";
     const parser = new Parser().getParser(site);
     const data = await parser.searchProducts(productName);
 
