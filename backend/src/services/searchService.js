@@ -10,7 +10,7 @@ class SearchService {
   }
 
   static async searchByLink(productUrl) {
-    const site = "ozon";
+    const site = "wildberries";
     const parser = new Parser().getParser(site);
     const data = await parser.searchByLink(productUrl);
 

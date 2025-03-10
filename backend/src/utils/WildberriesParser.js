@@ -30,6 +30,18 @@ class WildberriesParser extends BaseParser {
 
   async searchByLink(productUrl) {
     try {
+      const parts = productUrl.split("/");
+      const article = parts[4];
+
+      let url = `https://card.wb.ru/cards/v1/detail?appType=1&curr=rub&dest=-1257786&spp=0&nm=${article}`;
+      let response = await fetch(url);
+      let data = await response.json(url);
+
+      let item = {};
+      item.name = data.data.products[0].name;
+      item.price = data.data.products[0].priceU / 100;
+      item.link = productUrl;
+
       return item;
     } catch (error) {
       console.error("Ошибка:", error);
