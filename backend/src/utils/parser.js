@@ -1,11 +1,13 @@
-import * as cheerio from "cheerio";
 import driverPool from "./driverPool.js";
 import OzonParser from "./OzonParser.js";
 import WildberriesParser from "./WildberriesParser.js";
 
 class Parser {
   constructor() {
-    this.driver = driverPool.getDriver();
+    const data = driverPool.getDriver();
+
+    this.driver = data.driver;
+    this.userAgent = data.userAgent;
   }
 
   getParser(site) {
@@ -19,7 +21,7 @@ class Parser {
       throw new Error(`Неизвестный сайт: ${site}.`);
     }
 
-    return new ParserClass(this.driver);
+    return new ParserClass(this.driver, this.userAgent);
   }
 }
 

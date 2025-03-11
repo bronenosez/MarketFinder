@@ -2,6 +2,7 @@ import { Builder } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import fakeUa from "fake-useragent";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,14 +12,17 @@ class DriverPool {
   constructor(poolSize = 3) {
     this.poolSize = poolSize;
     this.drivers = [];
+    this.userAgents = [];
     this.index = 0;
 
     for (let i = 0; i < poolSize; i++) {
-      this.drivers.push(this.createDriver());
+      const userAgent = fakeUa(); 
+      this.userAgents.push(userAgent);
+      this.drivers.push(this.createDriver(userAgent));
     }
   }
 
-  createDriver() {
+  createDriver(userAgent) {
     const chromeOptions = new chrome.Options();
     chromeOptions.addArguments("--headless=new");
     chromeOptions.addArguments("--enable-javascript");
@@ -26,9 +30,7 @@ class DriverPool {
     chromeOptions.addArguments("--ignore-certificate-errors");
     chromeOptions.addArguments("--ignore-ssl-errors");
     chromeOptions.excludeSwitches(["enable-automation"]);
-    chromeOptions.addArguments(
-      "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.124 Safari/537.36"
-    );
+    chromeOptions.addArguments(`user-agent=${userAgent}`);
 
     return new Builder()
       .forBrowser("chrome")
@@ -39,8 +41,9 @@ class DriverPool {
 
   getDriver() {
     const driver = this.drivers[this.index];
+    const userAgent = this.userAgents[this.index];
     this.index = (this.index + 1) % this.poolSize;
-    return driver;
+    return { driver, userAgent };
   }
 
   async closeAll() {
