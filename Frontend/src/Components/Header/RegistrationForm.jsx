@@ -1,9 +1,9 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import Modal from "../Modal";
 import '../../styles/Forms.css'
 import eye_png from '../../img/eye.png';
 import eye_close_png from '../../img/eye_close.png';
-import info_svg from '../../img/info.svg'
+import info_svg from '../../img/info.svg';
 
 import { validateEmail, validateName, validatePassword, validateRepeatPassword } from "../../Scripts/validate.js"
 
@@ -27,6 +27,8 @@ export default function RegistrationFormModal({ condition, setCondition }) {
   const [passwordError, setPasswordError] = useState('Пустое поле');
   const [repeatpasswordError, setRepeatPasswordError] = useState('Пустое поле');
 
+  const formStatusRef = useRef();
+
   /* Clear vars if form is closed */
   useEffect(() => {
     if (!condition) {
@@ -44,6 +46,9 @@ export default function RegistrationFormModal({ condition, setCondition }) {
       setEmailError('Пустое поле');
       setPasswordError('Пустое поле');
       setRepeatPasswordError('Пустое поле');
+
+      formStatusRef.current.innerHTML = '';
+      formStatusRef.current.style.opacity = "0";
     }
   }, [condition]);
 
@@ -100,12 +105,29 @@ export default function RegistrationFormModal({ condition, setCondition }) {
  
   function handleBackendRequest() {
     if ([nameError, emailError, passwordError, repeatpasswordError].every(x => x === false)) {
+      
       console.log('accepted'.toUpperCase());
-      console.log([nameError, emailError, passwordError, repeatpasswordError])
+      console.log([nameError, emailError, passwordError, repeatpasswordError]);
+
+      if (formStatusRef.current.style.opacity === "1"){ formStatusRef.current.style.opacity = 0}
+      
+      formStatusRef.current.innerHTML = 'Готово';
+      formStatusRef.current.style.color = 'green';
+      setTimeout(() => (formStatusRef.current.style.opacity = "1"), 200);
+
+      setTimeout(() => setCondition(), 2000);
     }
+
     else {
       console.log("don't accepted".toUpperCase());
-      console.log([nameError, emailError, passwordError, repeatpasswordError])
+      console.log([nameError, emailError, passwordError, repeatpasswordError]);
+      
+      console.log(formStatusRef.current.style.opacity)
+      if (formStatusRef.current.style.opacity === "1"){ formStatusRef.current.style.opacity = 0}
+      
+      formStatusRef.current.innerHTML = 'Некорректные значения формы';
+      formStatusRef.current.style.color = 'red';
+      setTimeout(() => (formStatusRef.current.style.opacity = "1"), 200)
     }
   }
 
@@ -209,6 +231,11 @@ export default function RegistrationFormModal({ condition, setCondition }) {
             </div>     
             
         </div>
+        <p
+          ref={formStatusRef} 
+          className="formStatus" 
+          style={{opacity: 0}}
+        ></p>
         <button 
           className="registration-button"
           id="registration-button"

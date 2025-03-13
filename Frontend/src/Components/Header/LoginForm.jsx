@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 import Modal from "../Modal";
 import '../../styles/Forms.css'
 import eye_png from '../../img/eye.png';
@@ -19,6 +19,8 @@ export default function LoginFormModal({ condition, setCondition }) {
   const [emailError, setEmailError] = useState('Пустое поле');
   const [passwordError, setPasswordError] = useState('Пустое поле');
 
+  const formStatusRef = useRef('');
+
   /* Clear vars if form is closed */
   useEffect(() => {
     if (!condition) {
@@ -30,6 +32,9 @@ export default function LoginFormModal({ condition, setCondition }) {
 
       setEmailError('Пустое поле');
       setPasswordError('Пустое поле');
+      
+      formStatusRef.current.innerHTML = '';
+      formStatusRef.current.style.opacity = "0";
     }
   }, [condition]);
 
@@ -65,11 +70,25 @@ export default function LoginFormModal({ condition, setCondition }) {
   function handleBackendRequest() {
     if ([emailError, passwordError].every(x => x === false)) {
       console.log('accepted'.toUpperCase());
-      console.log([emailError, passwordError])
+      console.log([emailError, passwordError]);
+
+      if (formStatusRef.current.style.opacity === "1"){ formStatusRef.current.style.opacity = 0};
+      
+      formStatusRef.current.innerHTML = 'Готово';
+      formStatusRef.current.style.color = 'green';
+      setTimeout(() => (formStatusRef.current.style.opacity = "1"), 200);
+
+      setTimeout(() => setCondition(), 2000);
     }
     else {
       console.log("don't accepted".toUpperCase());
       console.log([emailError, passwordError])
+
+      if (formStatusRef.current.style.opacity === "1"){ formStatusRef.current.style.opacity = 0};
+      
+      formStatusRef.current.innerHTML = 'Данные введены неправильно';
+      formStatusRef.current.style.color = 'red';
+      setTimeout(() => (formStatusRef.current.style.opacity = "1"), 200);
     }
   }
 
@@ -122,6 +141,11 @@ export default function LoginFormModal({ condition, setCondition }) {
                
 
         </div>
+        <p
+          ref={formStatusRef} 
+          className="formStatus" 
+          style={{opacity: 0}}
+        ></p>
         <button 
           className="login-button"
           id="login-button"

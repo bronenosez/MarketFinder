@@ -1,10 +1,19 @@
+@keyframes wrapDelay {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
 .modal_wrap {
     width: 1px;
     height: 1px;
-    transition: all .3s;
+    transition: opacity .5s;
+    opacity: 0;
 }
 .modal_wrap.active {
-
+    
     display: flex;
     flex-direction: column;
     
@@ -14,7 +23,9 @@
     position: fixed;
     top: 0;
     left: 0;
+    opacity: 1;
 }
+
 .wrap {
 
     z-index: 100;
@@ -25,7 +36,7 @@
     opacity: 0;
     width: 0;
     height: 0;
-    transition: all .3s;
+  
     margin-inline: auto;
 }
 .wrap * {
