@@ -10,13 +10,13 @@ import HowItWorks from "./HowItWorks";
 export default function Header () {
 
     const [infoCondition, setInfoCondition] = useState(false);
-    const [registrationCondition, setRegistrationCondition] = useState(false);
+    const [registrationCondition, setRegistrationCondition] = useState(true);
 
     function handleInfoCondition () {
         setInfoCondition((c) => (!c))
     }
     function handleRegistrationCondition () {
-        setRegistrationCondition((c) => (!c));
+        setRegistrationCondition((c) => (true));
     }
 
     return (
@@ -43,11 +43,11 @@ export default function Header () {
             
             <HowItWorks 
                 condition={infoCondition}
-                setCondition={() => setInfoCondition()}
+                setCondition={() => handleInfoCondition()}
             />
             <RegistrationForm
                 condition={registrationCondition}
-                setCondition={() => setRegistrationCondition()}
+                setCondition={() => handleRegistrationCondition()}
             />
         </header>
     )
