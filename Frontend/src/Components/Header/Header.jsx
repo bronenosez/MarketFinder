@@ -6,17 +6,22 @@ import info from "../../img/info.svg";
 
 import RegistrationForm from "./RegistrationForm";
 import HowItWorks from "./HowItWorks";
+import LoginFormModal from './LoginForm';
 
 export default function Header () {
 
     const [infoCondition, setInfoCondition] = useState(false);
-    const [registrationCondition, setRegistrationCondition] = useState(true);
+    const [registrationCondition, setRegistrationCondition] = useState(false);
+    const [loginCondition, setLoginCondition] = useState(false);
 
     function handleInfoCondition () {
         setInfoCondition((c) => (!c))
     }
     function handleRegistrationCondition () {
-        setRegistrationCondition((c) => (true));
+        setRegistrationCondition((c) => (!c));
+    }
+    function handleLoginCondition () {
+        setLoginCondition((c) => (!c));
     }
 
     return (
@@ -31,10 +36,17 @@ export default function Header () {
                         <img src={info} alt="" onClick={() => handleInfoCondition()}/>
                     </div>
                     <div className="autorization">
-                        <div onClick={() => handleRegistrationCondition()} className="sign_in">
+                        <div 
+                          className="sign_in"
+                          onClick={() => handleLoginCondition()} 
+                        >
                             <p>Войти</p>
                         </div>
-                        <div className="sign_up">
+                        <div 
+                          className="sign_up"
+                          onClick={() => handleRegistrationCondition()}
+                        >
+                            
                             <p>Регистрация</p>
                         </div>
                     </div>
@@ -48,6 +60,10 @@ export default function Header () {
             <RegistrationForm
                 condition={registrationCondition}
                 setCondition={() => handleRegistrationCondition()}
+            />
+            <LoginFormModal 
+                condition={loginCondition}
+                setCondition={() => handleLoginCondition()}
             />
         </header>
     )

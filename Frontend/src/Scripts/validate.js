@@ -3,7 +3,9 @@ export const validateEmail = (email) => {
     
     if (email.trim() === "") return 'Пустое поле';
     if (!re.test(email)) return 'Некорректная почта';
-    
+
+    if (!(email.trim() === "") && re.test(email)) return false;
+     
     return '';
   };
   
@@ -11,7 +13,10 @@ export const validateEmail = (email) => {
     const acceptValues = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyz_1234567890";
     
     if (name.trim() === "") return 'Пустое поле';
-    if (!name.split('').every((x) => acceptValues.includes(x))) return 'Некорректное имя';
+    if (name.trim().length < 5) return 'Слишком короткое имя'
+    if (!String(name).toLowerCase().split('').every((x) => acceptValues.includes(x))) return 'Некорректное имя';
+    
+    if (!(name.trim() === "") && String(name).toLowerCase().split('').every((x) => acceptValues.includes(x))) return false;
     
     return '';
   };
@@ -21,6 +26,8 @@ export const validateEmail = (email) => {
     
     if (password.trim() === "") return 'Пустое поле';
     if (!acceptValues.test(password)) return 'Некорректный пароль';
+
+    if (!(password.trim() === "") && acceptValues.test(password)) return false;
     
     return '';
   };
@@ -29,5 +36,7 @@ export const validateEmail = (email) => {
     if (repeatPassword.trim() === "") return 'Пустое поле';
     if (repeatPassword !== password) return 'Пароли не совпадают';
     
+    if (!(repeatPassword.trim() === "") && repeatPassword === password) return false;
+
     return '';
   };

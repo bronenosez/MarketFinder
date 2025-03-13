@@ -1,18 +1,17 @@
-import { useState} from "react";
+import {useState, useEffect} from "react";
 import Modal from "../Modal";
 import '../../styles/Forms.css'
 import eye_png from '../../img/eye.png';
 import eye_close_png from '../../img/eye_close.png';
 import info_svg from '../../img/info.svg'
 
-import { validateEmail, validateName, validatePassword, validateRepeatPassword } from "../../Scripts/validation"
+import { validateEmail, validateName, validatePassword, validateRepeatPassword } from "../../Scripts/validate.js"
 
 export default function RegistrationFormModal({ condition, setCondition }) {
   
   const [eyeCondition, setEyeCondition] = useState(false);
   const [eyeCondition_2, setEyeCondition_2] = useState(false);
 
-  /* validation */
   const [nameValue, setNameValue] = useState('');
   const [emailValue, setEmailValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
@@ -27,6 +26,27 @@ export default function RegistrationFormModal({ condition, setCondition }) {
   const [emailError, setEmailError] = useState('Пустое поле');
   const [passwordError, setPasswordError] = useState('Пустое поле');
   const [repeatpasswordError, setRepeatPasswordError] = useState('Пустое поле');
+
+  /* Clear vars if form is closed */
+  useEffect(() => {
+    if (!condition) {
+      setNameValue('');
+      setEmailValue('');
+      setPasswordValue('');
+      setRepeatPasswordValue('');
+      
+      setNameChecked(false);
+      setEmailChecked(false);
+      setPasswordChecked(false);
+      setRepeatPasswordChecked(false);
+
+      setNameError('Пустое поле');
+      setEmailError('Пустое поле');
+      setPasswordError('Пустое поле');
+      setRepeatPasswordError('Пустое поле');
+    }
+  }, [condition]);
+
 
   function handleInputChecked(e) {
     const { name } = e.target;
@@ -57,6 +77,7 @@ export default function RegistrationFormModal({ condition, setCondition }) {
   const handleName = (e) => {
     setNameValue(e.target.value);
     setNameError(validateName(e.target.value));
+
   };
 
   const handlePassword = (e) => {
@@ -77,7 +98,16 @@ export default function RegistrationFormModal({ condition, setCondition }) {
     setEyeCondition_2(c => !c);
   }
  
-
+  function handleBackendRequest() {
+    if ([nameError, emailError, passwordError, repeatpasswordError].every(x => x === false)) {
+      console.log('accepted'.toUpperCase());
+      console.log([nameError, emailError, passwordError, repeatpasswordError])
+    }
+    else {
+      console.log("don't accepted".toUpperCase());
+      console.log([nameError, emailError, passwordError, repeatpasswordError])
+    }
+  }
 
   return (
     <Modal condition={condition} setCondition={setCondition}>
@@ -95,7 +125,7 @@ export default function RegistrationFormModal({ condition, setCondition }) {
                 <input 
                   type="text" 
                   name="userName" 
-                  id="userNameInput" 
+                  id="registration_userNameInput" 
                   value={nameValue}
                   onChange={handleName}
                   onBlur={handleInputChecked}
@@ -112,7 +142,7 @@ export default function RegistrationFormModal({ condition, setCondition }) {
                 <input 
                   type="text" 
                   name="email" 
-                  id="emailInput" 
+                  id="registration_emailInput" 
                   value={emailValue}
                   onBlur={e => handleInputChecked(e)}
                   onChange={handleEmail}
@@ -124,7 +154,7 @@ export default function RegistrationFormModal({ condition, setCondition }) {
 
                 <div className="tooltip">
                   <img src={info_svg} alt="" width={25} height={25}/>
-                  <span class="tooltip-text">
+                  <span className="tooltip-text">
                     Пароль должен содержать:<br/>
                     • Минимум 8 символов<br/>
                     • 2 строчные буквы (a-z)<br/>
@@ -146,7 +176,7 @@ export default function RegistrationFormModal({ condition, setCondition }) {
                 <input 
                 type={eyeCondition ? "text" : "password"}
                 name="password" 
-                id="passwordInput"
+                id="registration_passwordInput"
                 value={passwordValue} 
                 onBlur={e => handleInputChecked(e)}
                 onChange={handlePassword}
@@ -168,7 +198,7 @@ export default function RegistrationFormModal({ condition, setCondition }) {
                 <input 
                   type={eyeCondition_2 ? "text" : "password"} 
                   name="repeatPassword" 
-                  id="repeatPasswordInput"
+                  id="registration_repeatPasswordInput"
                   value={repeatPasswordValue} 
                   onBlur={e => handleInputChecked(e)}
                   onChange={handleRepeatPassword}
@@ -182,6 +212,7 @@ export default function RegistrationFormModal({ condition, setCondition }) {
         <button 
           className="registration-button"
           id="registration-button"
+          onClick={handleBackendRequest}
         >
           Зарегистрироваться
         </button>
