@@ -207,7 +207,7 @@ export default function RegistrationFormModal({ condition, setCondition }) {
                 
               </div>
             </div>     
-
+            
         </div>
         <button 
           className="registration-button"

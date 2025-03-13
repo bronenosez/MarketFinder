@@ -62,7 +62,16 @@ export default function LoginFormModal({ condition, setCondition }) {
   function handleEyeCondition () {
     setEyeCondition(c => !c);
   }
-  
+  function handleBackendRequest() {
+    if ([emailError, passwordError].every(x => x === false)) {
+      console.log('accepted'.toUpperCase());
+      console.log([emailError, passwordError])
+    }
+    else {
+      console.log("don't accepted".toUpperCase());
+      console.log([emailError, passwordError])
+    }
+  }
 
   return (
     <Modal condition={condition} setCondition={setCondition}>
@@ -116,6 +125,7 @@ export default function LoginFormModal({ condition, setCondition }) {
         <button 
           className="login-button"
           id="login-button"
+          onClick={handleBackendRequest}
         >
           Войти
         </button>
