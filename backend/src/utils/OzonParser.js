@@ -99,44 +99,31 @@ class OzonParser extends BaseParser {
   }
 
   async searchByLink(productUrl) {
+    const jarCookie = await this.parseJarCookies();
+    const client = wrapper(axios.create({ jar: jarCookie, withCredentials: true }));
+
     try {
-      await this.driver.get(productUrl);
+      let response = await client.get(productUrl, {
+        headers: {
+          'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+          'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+          'priority': 'u=0, i',
+          'sec-ch-ua': '"Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"',
+          'sec-ch-ua-mobile': '?1',
+          'sec-ch-ua-platform': '"Android"',
+          'sec-fetch-dest': 'document',
+          'sec-fetch-mode': 'navigate',
+          'sec-fetch-site': 'none',
+          'sec-fetch-user': '?1',
+          'service-worker-navigation-preload': 'true',
+          'upgrade-insecure-requests': '1',
+          'user-agent': this.userAgent
+        }
+      });
+      
+      const $ = cheerio.load(response.data);
 
-      await this.driver.executeScript(
-        "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});"
-      );
-
-      await this.driver.sleep(this.getRandomDelay());
-
-      const pageSource = await this.driver.getPageSource();
-
-      const $ = cheerio.load(pageSource);
-
-      let item = {};
-
-      item.name = $('[data-widget="webProductHeading"]')
-        .find("h1.tsHeadline550Medium")
-        .text()
-        .trim();
-      item.priceWithOzonCard = $('[data-widget="webPrice"]')
-        .find('span:contains("c Ozon Картой")')
-        .parent()
-        .children()
-        .first()
-        .find("span")
-        .first()
-        .text()
-        .trim();
-      item.priceWithoutOzonCard = $('[data-widget="webPrice"]')
-        .find('span:contains("без Ozon Карты")')
-        .parent()
-        .parent()
-        .first()
-        .find("span")
-        .first()
-        .text()
-        .trim();
-
+      
       return item;
     } catch (error) {
       console.error("Ошибка:", error);
