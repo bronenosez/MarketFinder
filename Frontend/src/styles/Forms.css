@@ -6,7 +6,8 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    width: 500px;
+    width: 90%;
+    max-width: 500px;
     height: 630px;
 
     margin-inline: auto;
@@ -21,11 +22,9 @@
     justify-content: space-between;
 }
 .registration__text {
-    
     height: 100%;
     display: flex;
     flex-direction: column;
-  
     row-gap: 20px;
 }
 .registration h1 {
@@ -97,15 +96,12 @@
     transition: background-color .2s;
 }
 
-
 .tooltip {
     display: flex;
     align-items: end;
- 
     cursor: pointer;
-  }
-  
-  .tooltip .tooltip-text {
+}
+.tooltip .tooltip-text {
     transition: all .3s ease-in-out;
     visibility: hidden;
     width: 250px;
@@ -114,23 +110,20 @@
     text-align: center;
     padding: 8px;
     border-radius: 5px;
-  
     position: absolute;
     bottom: 125%;
     left: 50%;
     transform: translateX(-50%);
     opacity: 0;
     transition: opacity 0.3s;
-  }
-  
-  .tooltip:hover .tooltip-text {
+}
+.tooltip:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
-  }
-  
-  /* Login */
+}
 
-  .login {
+/* Login */
+.login {
     max-height: 75vh;
     margin-top: 100px;
     margin-inline: auto;
@@ -138,7 +131,8 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    width: 500px;
+    width: 90%;
+    max-width: 500px;
     height: 420px;
 
     margin-inline: auto;
@@ -153,11 +147,9 @@
     justify-content: space-between;
 }
 .login__text {
-    
     height: 100%;
     display: flex;
     flex-direction: column;
-  
     row-gap: 20px;
 }
 .login h1 {
