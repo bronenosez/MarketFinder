@@ -4,6 +4,7 @@ import tough from "tough-cookie";
 import { until, By } from "selenium-webdriver";
 import { wrapper } from "axios-cookiejar-support";
 import axios from "axios";
+import ApiError from "./ApiError.js";
 
 class OzonParser extends BaseParser {
   async parseSeleniumCookies() {
@@ -102,7 +103,7 @@ class OzonParser extends BaseParser {
 
       return items;
     } catch (error) {
-      console.log("Ошибка:", error);
+      throw error;
     }
   }
 
@@ -132,26 +133,30 @@ class OzonParser extends BaseParser {
           "user-agent": this.userAgent,
         },
       });
-
+      
       const $ = cheerio.load(response.data);
 
-      let item = {};
+      if ($('[data-widget="webOutOfStock"]').length > 0) {
+        throw ApiError.badRequest("Товар закончился.");
+      } else {
+        let item = {};
 
-      item.name = $('[data-widget="webProductHeading"] h1').text().trim();
-      item.price = $('span:contains("без Ozon Карты")')
-        .parent()
-        .parent()
-        .children()
-        .first()
-        .children()
-        .first()
-        .text()
-        .trim();
-
-      return item;
+        item.name = $('[data-widget="webProductHeading"] h1').text().trim();
+        item.price = $('span:contains("без Ozon Карты")')
+          .parent()
+          .parent()
+          .children()
+          .first()
+          .children()
+          .first()
+          .text()
+          .trim();
+        
+        return item;
+      }
+      
     } catch (error) {
-      console.error("Ошибка:", error);
-      return [];
+      throw error;
     }
   }
 }

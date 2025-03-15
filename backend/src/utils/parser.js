@@ -1,6 +1,7 @@
 import driverPool from "./driverPool.js";
 import OzonParser from "./OzonParser.js";
 import WildberriesParser from "./WildberriesParser.js";
+import ApiError from "../utils/ApiError.js";
 
 class Parser {
   constructor() {
@@ -18,7 +19,7 @@ class Parser {
 
     const ParserClass = parsers[site];
     if (!ParserClass) {
-      throw new Error(`Неизвестный сайт: ${site}.`);
+      throw ApiError.badRequest(`Неизвестный сайт: ${site}.`);
     }
 
     return new ParserClass(this.driver, this.userAgent);
