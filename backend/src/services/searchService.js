@@ -10,11 +10,16 @@ class SearchService {
   }
 
   static async searchByLink(productUrl) {
-    const site = "wildberries";
-    const parser = new Parser().getParser(site);
-    const data = await parser.searchByLink(productUrl);
-
-    return data;
+    const marketplaceRegex = /https?:\/\/(?:www\.)?([^\/\.]+)\./;
+    const matchMarketplace = productUrl.match(marketplaceRegex);
+    
+    if (matchMarketplace) {
+      const site = matchMarketplace[1];
+      const parser = new Parser().getParser(site);
+      const data = await parser.searchByLink(productUrl);
+  
+      return data;
+    }
   }
 }
 
