@@ -11,6 +11,10 @@ class Parser {
     this.userAgent = data.userAgent;
   }
 
+  static getAvailableSites() {
+    return ["ozon", "wildberries"];
+  }
+
   getParser(site) {
     const parsers = {
       ozon: OzonParser,

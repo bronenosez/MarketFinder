@@ -86,7 +86,7 @@ class OzonParser extends BaseParser {
 
         el.mainState.forEach((mainstate) => {
           if (mainstate?.id === "atom") {
-            item.price = mainstate.atom.priceV2.price[0].text;
+            item.price = Number(mainstate.atom.priceV2.price[0].text.replace(/\s+/g, "").slice(0, -1));
           } else if (mainstate?.id === "name") {
             item.name = mainstate.atom.textAtom.text;
           }

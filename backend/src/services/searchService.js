@@ -2,11 +2,41 @@ import Parser from "../utils/parser.js";
 
 class SearchService {
   static async searchProducts(productName) {
-    const site = "ozon";
-    const parser = new Parser().getParser(site);
-    const data = await parser.searchProducts(productName);
+    const parser = new Parser();
+    const sites = Parser.getAvailableSites();
+    const results = [];
 
-    return data;
+    for (const site of sites) {
+      try {
+        const siteParser = parser.getParser(site);
+        const data = await siteParser.searchProducts(productName);
+        results.push({site, data});
+      } catch (error) {
+        console.log(`Ошибка парсинга для ${site}: `, error.message);
+        throw error;
+      }
+    }
+    
+    return results;
+  }
+
+  static async searchSimilarProducts(productName, excludedSite) {
+    const parser = new Parser();
+    const sites = Parser.getAvailableSites();
+    const results = [];
+
+    const sitesToSearch = sites.filter(site => site !== excludedSite);
+    for (const site of sitesToSearch) {
+      try {
+          const siteParser = parser.getParser(site); 
+          const data = await siteParser.searchProducts(productName); 
+          results.push({ site, data });  
+      } catch (error) {
+          console.log(`Ошибка при поиске на ${site}: `, error.message);
+      }
+    }
+
+    return results;
   }
 
   static async searchByLink(productUrl) {
@@ -16,9 +46,13 @@ class SearchService {
     if (matchMarketplace) {
       const site = matchMarketplace[1];
       const parser = new Parser().getParser(site);
-      const data = await parser.searchByLink(productUrl);
-  
-      return data;
+      const productData = await parser.searchByLink(productUrl);
+      
+      const similarProducts = await this.searchSimilarProducts(productData.name, site);
+      return {
+          originalProduct: productData,
+          comparisons: similarProducts,
+        };
     }
   }
 }
