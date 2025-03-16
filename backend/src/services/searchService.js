@@ -1,3 +1,4 @@
+import findMostSimilarProduct from "../utils/MatchFinder.js";
 import Parser from "../utils/parser.js";
 
 class SearchService {
@@ -23,20 +24,30 @@ class SearchService {
   static async searchSimilarProducts(productName, excludedSite) {
     const parser = new Parser();
     const sites = Parser.getAvailableSites();
-    const results = [];
-
     const sitesToSearch = sites.filter(site => site !== excludedSite);
+    
+    
+    let products = [];
     for (const site of sitesToSearch) {
       try {
           const siteParser = parser.getParser(site); 
           const data = await siteParser.searchProducts(productName); 
-          results.push({ site, data });  
+
+          for (const productData of data) {
+            products.push({ 
+              name: productData.name, 
+              description: productData.name,
+              link: productData.link
+            });
+          }
+          
       } catch (error) {
           console.log(`Ошибка при поиске на ${site}: `, error.message);
       }
     }
 
-    return results;
+    let result = await findMostSimilarProduct(productName, products);
+    return result;
   }
 
   static async searchByLink(productUrl) {
@@ -52,7 +63,7 @@ class SearchService {
       return {
           originalProduct: productData,
           comparisons: similarProducts,
-        };
+      };
     }
   }
 }
