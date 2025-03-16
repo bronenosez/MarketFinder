@@ -1,4 +1,4 @@
-import getEmbedding from "../utils/OpenAIE.js";
+import findMostSimilarProduct from "../utils/MatchFinder.js";
 import Parser from "../utils/parser.js";
 
 class SearchService {
@@ -21,43 +21,33 @@ class SearchService {
     return results;
   }
 
-  cosineSimilarity(vec1, vec2) {
-    const dotProduct = vec1.reduce((acc, val, i) => acc + val * vec2[i], 0);
-    const magnitude1 = Math.sqrt(vec1.reduce((acc, val) => acc + val ** 2, 0));
-    const magnitude2 = Math.sqrt(vec2.reduce((acc, val) => acc + val ** 2, 0));
-    return dotProduct / (magnitude1 * magnitude2);
-  }
-
   static async searchSimilarProducts(productName, excludedSite) {
     const parser = new Parser();
     const sites = Parser.getAvailableSites();
-    const results = [];
     const sitesToSearch = sites.filter(site => site !== excludedSite);
     
-    const productEmbedding = await getEmbedding(productName);
-
-
+    
+    let products = [];
     for (const site of sitesToSearch) {
       try {
           const siteParser = parser.getParser(site); 
           const data = await siteParser.searchProducts(productName); 
 
-          for (const product of data) {
-            const productDescription = product.name;
-            const productEmb = await getEmbedding(productDescription);
-
-            const similarity = cosineSimilarity(productEmbedding, productEmb);
-
-            if (similarity > 0.8) {
-              results.push({site, product, similarity});
-            }
+          for (const productData of data) {
+            products.push({ 
+              name: productData.name, 
+              description: productData.name,
+              link: productData.link
+            });
           }
+          
       } catch (error) {
           console.log(`Ошибка при поиске на ${site}: `, error.message);
       }
     }
 
-    return results;
+    let result = await findMostSimilarProduct(productName, products);
+    return result;
   }
 
   static async searchByLink(productUrl) {

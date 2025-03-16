@@ -41,6 +41,7 @@ class WildberriesParser extends BaseParser {
 
       let url = `https://card.wb.ru/cards/v1/detail?appType=1&curr=rub&dest=-1257786&spp=0&nm=${article}`;
       let response = await fetch(url);
+      console.log(response.headers);
       let data = await response.json(url);
 
       if (data.data.products.length !== 0) {
