@@ -2,7 +2,7 @@ import { Builder } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import fakeUa from "fake-useragent";
+import UserAgent from "user-agents";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +16,7 @@ class DriverPool {
     this.index = 0;
 
     for (let i = 0; i < poolSize; i++) {
-      const userAgent = fakeUa(); 
+      const userAgent = new UserAgent({ platform: "Win32" }).toString();
       this.userAgents.push(userAgent);
       this.drivers.push(this.createDriver(userAgent));
     }

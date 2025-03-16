@@ -22,13 +22,13 @@
     "drizzle-orm": "^0.40.0",
     "express": "^4.21.2",
     "express-joi-validation": "^6.0.0",
-    "fake-useragent": "^1.0.1",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "node-fetch": "^3.3.2",
     "openai": "^4.87.3",
     "selenium-webdriver": "^4.29.0",
-    "tough-cookie": "^5.1.2"
+    "tough-cookie": "^5.1.2",
+    "user-agents": "^1.1.480"
   },
   "devDependencies": {
     "drizzle-kit": "^0.30.5",

@@ -5,6 +5,7 @@ import { until, By } from "selenium-webdriver";
 import { wrapper } from "axios-cookiejar-support";
 import axios from "axios";
 import ApiError from "./ApiError.js";
+import extractProductData from "./parserJeskiy.js";
 
 class OzonParser extends BaseParser {
   async parseSeleniumCookies() {
@@ -78,28 +79,11 @@ class OzonParser extends BaseParser {
 
       let items = [];
 
-      widgetState.items.forEach((el) => {
-        let item = {
-          link: "https://www.ozon.ru" + el.action.link,
-          imageLinks: [],
-        };
-
-        el.mainState.forEach((mainstate) => {
-          if (mainstate?.id === "atom") {
-            item.price = Number(mainstate.atom.priceV2.price[0].text.replace(/\s+/g, "").slice(0, -1));
-          } else if (mainstate?.id === "name") {
-            item.name = mainstate.atom.textAtom.text;
-          }
-        });
-
-        el.tileImage.items.forEach((itemIm) => {
-          if (itemIm?.type === "image") {
-            item.imageLinks.push(itemIm.image.link);
-          }
-        });
-
-        items.push(item);
-      });
+      for (let el of widgetState.items) {
+        const productUrl = "https://www.ozon.ru" + el.action.link;
+        const productDetails = await this.searchByLink(productUrl);
+        items.push(productDetails);
+      }
 
       return items;
     } catch (error) {
@@ -114,47 +98,92 @@ class OzonParser extends BaseParser {
     );
 
     try {
-      let response = await client.get(productUrl, {
-        headers: {
-          accept:
-            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-          "accept-language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
-          priority: "u=0, i",
-          "sec-ch-ua":
-            '"Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"',
-          "sec-ch-ua-mobile": "?1",
-          "sec-ch-ua-platform": '"Android"',
-          "sec-fetch-dest": "document",
-          "sec-fetch-mode": "navigate",
-          "sec-fetch-site": "none",
-          "sec-fetch-user": "?1",
-          "service-worker-navigation-preload": "true",
-          "upgrade-insecure-requests": "1",
-          "user-agent": this.userAgent,
-        },
-      });
-      
+      let response = await client.get(
+        "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2",
+        {
+          params: {
+            url: "/product/sumka-na-poyas-1486390996/?__rr=1&__rr=2&at=Y7tjXqQm5FnrZPmWi7PB7DrHXL58yWhOqqEnlCQDy0Rz&from_url=https%253A%252F%252Fwww.ozon.ru%252F%253F__rr%253D1&layout_container=pdpMobileThemePage2&layout_page_index=2&sh=AXapu-KVMA&start_page_id=1e2a13f80c221caa9ece0caa8f1278c7",
+          },
+          headers: {
+            accept:
+              "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "accept-language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
+            priority: "u=0, i",
+            "sec-ch-ua":
+              '"Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"',
+            "sec-ch-ua-mobile": "?1",
+            "sec-ch-ua-platform": '"Android"',
+            "sec-fetch-dest": "document",
+            "sec-fetch-mode": "navigate",
+            "sec-fetch-site": "none",
+            "sec-fetch-user": "?1",
+            "service-worker-navigation-preload": "true",
+            "upgrade-insecure-requests": "1",
+            "user-agent": this.userAgent,
+          },
+        }
+      );
+
+      console.log(extractProductData(response.data));
+
       const $ = cheerio.load(response.data);
 
       if ($('[data-widget="webOutOfStock"]').length > 0) {
         throw ApiError.badRequest("Товар закончился.");
       } else {
+        const jsonLd = $('script[type="application/ld+json"]').html();
+        const productData = JSON.parse(jsonLd);
+
         let item = {};
 
         item.name = $('[data-widget="webProductHeading"] h1').text().trim();
-        item.price = $('span:contains("без Ozon Карты")')
-          .parent()
-          .parent()
-          .children()
-          .first()
-          .children()
-          .first()
-          .text()
-          .trim();
-        
+        item.price = Number(
+          $('span:contains("без Ozon Карты")')
+            .parent()
+            .parent()
+            .children()
+            .first()
+            .children()
+            .first()
+            .text()
+            .trim()
+            .replace(/\s+/g, "")
+            .slice(0, -1)
+        );
+        item.link = productUrl;
+
+        const descriptionItems =
+          productData.description || "Описание не найдено";
+        const dataStateElement = $("div[id*='state-webShortCharacteristics']");
+        const dataStateJson = dataStateElement.attr("data-state");
+
+        let category = "Категория не найдена";
+
+        if (dataStateJson) {
+          try {
+            const dataState = JSON.parse(dataStateJson);
+            const characteristics = dataState.characteristics || [];
+
+            const typeCharacteristic = characteristics.find(
+              (char) => char.title?.textRs[0]?.content === "Тип"
+            );
+
+            if (typeCharacteristic) {
+              category =
+                typeCharacteristic.values[0]?.text || "Категория не найдена";
+            }
+          } catch (error) {
+            console.error("Ошибка парсинга data-state:", error);
+          }
+        }
+
+        item.description =
+          `Название: ${item.name}\n` +
+          `Описание: ${descriptionItems}\n` +
+          `Категория: ${category}\n`;
+
         return item;
       }
-      
     } catch (error) {
       throw error;
     }
