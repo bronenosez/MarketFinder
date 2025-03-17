@@ -58,7 +58,9 @@ class SearchService {
       const parser = new Parser().getParser(site);
       const productData = await parser.searchByLink(productUrl);
 
+      
       return productData;
+      // TODO:  Расскоменить код когд будет готов парсер.
       // const similarProducts = await this.searchSimilarProducts(
       //   productData,
       //   site

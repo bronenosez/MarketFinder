@@ -91,19 +91,27 @@ class OzonParser extends BaseParser {
     }
   }
 
+  async extractPath(url, basePath = '/product/') {
+    const pattern = new RegExp(`(${basePath}[^?]+(\\?[^&]*)?)`);
+    const match = url.match(pattern);
+    return match ? match[0] : null;
+  }
+
   async searchByLink(productUrl) {
     const jarCookie = await this.parseJarCookies();
     const client = wrapper(
       axios.create({ jar: jarCookie, withCredentials: true })
     );
 
+    productUrl = await this.extractPath(productUrl);
+    console.log(productUrl)
+    //  &layout_container=pdpPage2column&layout_page_index=2&sh=glqyQ3jYXg&start_page_id=41ece86cf6c92366964ae875c344d533
+    // 
+    
     try {
       let response = await client.get(
-        "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2",
+        `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${productUrl}&layout_container=pdpPage2column&layout_page_index=2&sh=glqyQ3jYXg&start_page_id=41ece86cf6c92366964ae875c344d533`,
         {
-          params: {
-            url: "/product/sumka-na-poyas-1486390996/?__rr=1&__rr=2&at=Y7tjXqQm5FnrZPmWi7PB7DrHXL58yWhOqqEnlCQDy0Rz&from_url=https%253A%252F%252Fwww.ozon.ru%252F%253F__rr%253D1&layout_container=pdpMobileThemePage2&layout_page_index=2&sh=AXapu-KVMA&start_page_id=1e2a13f80c221caa9ece0caa8f1278c7",
-          },
           headers: {
             accept:
               "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -124,66 +132,69 @@ class OzonParser extends BaseParser {
         }
       );
 
+      console.log(`https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${productUrl}&layout_container=pdpPage2column&layout_page_index=2&sh=glqyQ3jYXg&start_page_id=41ece86cf6c92366964ae875c344d533`)
+
+      // console.log(JSON.stringify(response.data));
       console.log(extractProductData(response.data));
+      return 1;
+      // const $ = cheerio.load(response.data);
 
-      const $ = cheerio.load(response.data);
+      // if ($('[data-widget="webOutOfStock"]').length > 0) {
+      //   throw ApiError.badRequest("Товар закончился.");
+      // } else {
+      //   // const jsonLd = $('script[type="application/ld+json"]').html();
+      //   // const productData = JSON.parse(jsonLd);
 
-      if ($('[data-widget="webOutOfStock"]').length > 0) {
-        throw ApiError.badRequest("Товар закончился.");
-      } else {
-        const jsonLd = $('script[type="application/ld+json"]').html();
-        const productData = JSON.parse(jsonLd);
+      //   // let item = {};
 
-        let item = {};
+      //   // item.name = $('[data-widget="webProductHeading"] h1').text().trim();
+      //   // item.price = Number(
+      //   //   $('span:contains("без Ozon Карты")')
+      //   //     .parent()
+      //   //     .parent()
+      //   //     .children()
+      //   //     .first()
+      //   //     .children()
+      //   //     .first()
+      //   //     .text()
+      //   //     .trim()
+      //   //     .replace(/\s+/g, "")
+      //   //     .slice(0, -1)
+      //   // );
+      //   // item.link = productUrl;
 
-        item.name = $('[data-widget="webProductHeading"] h1').text().trim();
-        item.price = Number(
-          $('span:contains("без Ozon Карты")')
-            .parent()
-            .parent()
-            .children()
-            .first()
-            .children()
-            .first()
-            .text()
-            .trim()
-            .replace(/\s+/g, "")
-            .slice(0, -1)
-        );
-        item.link = productUrl;
+      //   // const descriptionItems =
+      //   //   productData.description || "Описание не найдено";
+      //   // const dataStateElement = $("div[id*='state-webShortCharacteristics']");
+      //   // const dataStateJson = dataStateElement.attr("data-state");
 
-        const descriptionItems =
-          productData.description || "Описание не найдено";
-        const dataStateElement = $("div[id*='state-webShortCharacteristics']");
-        const dataStateJson = dataStateElement.attr("data-state");
+      //   // let category = "Категория не найдена";
 
-        let category = "Категория не найдена";
+      //   // if (dataStateJson) {
+      //   //   try {
+      //   //     const dataState = JSON.parse(dataStateJson);
+      //   //     const characteristics = dataState.characteristics || [];
 
-        if (dataStateJson) {
-          try {
-            const dataState = JSON.parse(dataStateJson);
-            const characteristics = dataState.characteristics || [];
+      //   //     const typeCharacteristic = characteristics.find(
+      //   //       (char) => char.title?.textRs[0]?.content === "Тип"
+      //   //     );
 
-            const typeCharacteristic = characteristics.find(
-              (char) => char.title?.textRs[0]?.content === "Тип"
-            );
+      //   //     if (typeCharacteristic) {
+      //   //       category =
+      //   //         typeCharacteristic.values[0]?.text || "Категория не найдена";
+      //   //     }
+      //   //   } catch (error) {
+      //   //     console.error("Ошибка парсинга data-state:", error);
+      //   //   }
+      //   // }
 
-            if (typeCharacteristic) {
-              category =
-                typeCharacteristic.values[0]?.text || "Категория не найдена";
-            }
-          } catch (error) {
-            console.error("Ошибка парсинга data-state:", error);
-          }
-        }
+      //   // item.description =
+      //   //   `Название: ${item.name}\n` +
+      //   //   `Описание: ${descriptionItems}\n` +
+      //   //   `Категория: ${category}\n`;
 
-        item.description =
-          `Название: ${item.name}\n` +
-          `Описание: ${descriptionItems}\n` +
-          `Категория: ${category}\n`;
-
-        return item;
-      }
+      //   return 1;
+      // }
     } catch (error) {
       throw error;
     }
