@@ -15,7 +15,7 @@ header {
 .logo {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: end;
     column-gap: 10px;
     
 }
@@ -148,4 +148,31 @@ width: 100%;
 }
 .howItWorks__cross:hover, .howItWorks button:hover {
     scale: 1;
+}
+
+
+
+
+
+
+@media (max-width: 1024px) {
+    .logo img {
+        width: 40px;
+        height: 40px;
+    }
+    .logo p {
+        font-size: 26px;
+    }
+    .burger {
+        display: flex;
+        flex-direction: column;
+        row-gap: 3px;
+    }
+    .burger__menu {
+        display: none;
+    }
+    .line {
+        width: 30px;
+        border: solid 2px black;
+    }
 }

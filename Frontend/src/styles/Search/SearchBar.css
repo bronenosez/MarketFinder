@@ -20,7 +20,10 @@
 .bar:hover {    
     box-shadow: 0px 2px 4px 0px rgba(173, 172, 172, 0.25);
 }
-input {
+.bar img {
+    cursor: pointer;
+}
+.bar input {
     outline: none;
     border: none;
     font-size: 26px;

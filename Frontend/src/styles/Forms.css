@@ -1,3 +1,8 @@
+.login input, .registration input {
+    font-size: 26px;
+    width: 95%;
+    height: 80%;
+}
 .registration {
     max-height: 75vh;
     margin-top: 100px;

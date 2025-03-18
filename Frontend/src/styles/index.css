@@ -15,6 +15,10 @@ body {
     font-family: Roboto, suns-serif;
     margin-block: 120px;
 }
+input {
+    outline: none;
+    border: none;
+}
 .container {
     display: flex;
     flex-direction: column;
