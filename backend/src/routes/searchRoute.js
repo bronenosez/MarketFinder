@@ -1,11 +1,9 @@
-import SearchController from '../controllers/searchController.js';
+import SearchController from "../controllers/searchController.js";
 
-import { Router } from 'express';
-
+import { Router } from "express";
 
 const searchRouter = Router();
 
-searchRouter.post('/', SearchController.searchProducts);
-
+searchRouter.post("/", SearchController.searchProducts);
 
 export default searchRouter;
