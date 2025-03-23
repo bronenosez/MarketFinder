@@ -83,7 +83,7 @@ class WildberriesParser extends BaseParser {
   async searchProducts(productName) {
     try {
       let response = await fetch(
-        `https://search.wb.ru/exactmatch/ru/common/v9/search?ab_testing=false&appType=1&curr=rub&dest=123589415&lang=ru&page=1&query=${productName}&resultset=catalog&sort=popular&spp=30&suppressSpellcheck=false`
+        `https://search.wb.ru/exactmatch/ru/common/v9/search?ab_testing=false&appType=1&curr=rub&dest=123589415&lang=ru&page=1&query=${productName}&resultset=catalog&sort=popular&spp=30&suppressSpellcheck=false`,
       );
       let data = await response.json();
 
@@ -93,8 +93,6 @@ class WildberriesParser extends BaseParser {
         for (let i = 0; i < data.data.products.length; i++) {
           let part_number = data.data.products[i].id;
 
-          // item.name = data.data.products[i].name;
-          // item.price = data.data.products[i].sizes[0].price.total / 100;
           let productLink = `https://www.wildberries.ru/catalog/${part_number}/detail.aspx`;
           let productDetails = await this.searchByLink(productLink);
           products.push(productDetails);
@@ -156,9 +154,8 @@ class WildberriesParser extends BaseParser {
       let response = await fetch(url);
       let data = await response.json(url);
       let productFeaturesData = await this.getProductFeature(article);
-      let formattedProductFeatures = await this.formatProductData(
-        productFeaturesData
-      );
+      let formattedProductFeatures =
+        await this.formatProductData(productFeaturesData);
 
       if (data.data.products.length !== 0) {
         let item = {};

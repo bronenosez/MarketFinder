@@ -14,9 +14,9 @@ class OzonParser extends BaseParser {
 
       await this.driver.wait(
         until.elementLocated(
-          By.xpath('//input[@placeholder="Искать на Ozon"]')
+          By.xpath('//input[@placeholder="Искать на Ozon"]'),
         ),
-        10000
+        10000,
       );
 
       const cookiesArray = await this.driver.manage().getCookies();
@@ -44,13 +44,13 @@ class OzonParser extends BaseParser {
   async searchProducts(productName) {
     const jarCookie = await this.parseJarCookies();
     const client = wrapper(
-      axios.create({ jar: jarCookie, withCredentials: true })
+      axios.create({ jar: jarCookie, withCredentials: true }),
     );
 
     try {
       let response = await client.get(
         `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=/search/?from_global=true&layout_page_index=1&page=1&paginator_token=3618992&search_page_state=vz6tCVi-i0M4KJtcGIx7V8QPI3G0hIIGeom1_eyH-ZEoZr2A-u-i1sT-j483qpTRocwHhTWswGXiADSSAWlhmc_qeDTgNKYJxqx8zXPKPFZEDAz33ciIlD9HJnJW&text=${encodeURIComponent(
-          productName
+          productName,
         )}`,
         {
           headers: {
@@ -70,7 +70,7 @@ class OzonParser extends BaseParser {
             "upgrade-insecure-requests": "1",
             "user-agent": this.userAgent,
           },
-        }
+        },
       );
       let widgetStatesKeys = Object.keys(response.data.widgetStates);
       const firstKey = widgetStatesKeys[0];
@@ -91,7 +91,7 @@ class OzonParser extends BaseParser {
     }
   }
 
-  async extractPath(url, basePath = '/product/') {
+  async extractPath(url, basePath = "/product/") {
     const pattern = new RegExp(`(${basePath}[^?]+(\\?[^&]*)?)`);
     const match = url.match(pattern);
     return match ? match[0] : null;
@@ -100,14 +100,12 @@ class OzonParser extends BaseParser {
   async searchByLink(productUrl) {
     const jarCookie = await this.parseJarCookies();
     const client = wrapper(
-      axios.create({ jar: jarCookie, withCredentials: true })
+      axios.create({ jar: jarCookie, withCredentials: true }),
     );
 
     productUrl = await this.extractPath(productUrl);
-    console.log(productUrl)
-    //  &layout_container=pdpPage2column&layout_page_index=2&sh=glqyQ3jYXg&start_page_id=41ece86cf6c92366964ae875c344d533
-    // 
-    
+    console.log(productUrl);
+
     try {
       let response = await client.get(
         `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${productUrl}&layout_container=pdpPage2column&layout_page_index=2&sh=glqyQ3jYXg&start_page_id=41ece86cf6c92366964ae875c344d533`,
@@ -129,72 +127,16 @@ class OzonParser extends BaseParser {
             "upgrade-insecure-requests": "1",
             "user-agent": this.userAgent,
           },
-        }
+        },
       );
 
-      console.log(`https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${productUrl}&layout_container=pdpPage2column&layout_page_index=2&sh=glqyQ3jYXg&start_page_id=41ece86cf6c92366964ae875c344d533`)
-
-      // console.log(JSON.stringify(response.data));
-      console.log(extractProductData(response.data));
-      return 1;
-      // const $ = cheerio.load(response.data);
-
-      // if ($('[data-widget="webOutOfStock"]').length > 0) {
-      //   throw ApiError.badRequest("Товар закончился.");
-      // } else {
-      //   // const jsonLd = $('script[type="application/ld+json"]').html();
-      //   // const productData = JSON.parse(jsonLd);
-
-      //   // let item = {};
-
-      //   // item.name = $('[data-widget="webProductHeading"] h1').text().trim();
-      //   // item.price = Number(
-      //   //   $('span:contains("без Ozon Карты")')
-      //   //     .parent()
-      //   //     .parent()
-      //   //     .children()
-      //   //     .first()
-      //   //     .children()
-      //   //     .first()
-      //   //     .text()
-      //   //     .trim()
-      //   //     .replace(/\s+/g, "")
-      //   //     .slice(0, -1)
-      //   // );
-      //   // item.link = productUrl;
-
-      //   // const descriptionItems =
-      //   //   productData.description || "Описание не найдено";
-      //   // const dataStateElement = $("div[id*='state-webShortCharacteristics']");
-      //   // const dataStateJson = dataStateElement.attr("data-state");
-
-      //   // let category = "Категория не найдена";
-
-      //   // if (dataStateJson) {
-      //   //   try {
-      //   //     const dataState = JSON.parse(dataStateJson);
-      //   //     const characteristics = dataState.characteristics || [];
-
-      //   //     const typeCharacteristic = characteristics.find(
-      //   //       (char) => char.title?.textRs[0]?.content === "Тип"
-      //   //     );
-
-      //   //     if (typeCharacteristic) {
-      //   //       category =
-      //   //         typeCharacteristic.values[0]?.text || "Категория не найдена";
-      //   //     }
-      //   //   } catch (error) {
-      //   //     console.error("Ошибка парсинга data-state:", error);
-      //   //   }
-      //   // }
-
-      //   // item.description =
-      //   //   `Название: ${item.name}\n` +
-      //   //   `Описание: ${descriptionItems}\n` +
-      //   //   `Категория: ${category}\n`;
-
-      //   return 1;
-      // }
+      let extractedProductData = extractProductData(response.data);
+      let item = {};
+      item.name = extractedProductData.name;
+      item.link = extractedProductData.link;
+      item.description = extractedProductData.formattedDescription;
+      console.log(item);
+      return item;
     } catch (error) {
       throw error;
     }

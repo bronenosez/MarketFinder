@@ -3,7 +3,7 @@ import cosineSimilarity from "cosine-similarity";
 
 const model = await pipeline(
   "feature-extraction",
-  "Xenova/paraphrase-multilingual-MiniLM-L12-v2"
+  "Xenova/paraphrase-multilingual-MiniLM-L12-v2",
 );
 
 async function getEmbedding(text) {

@@ -1,102 +1,118 @@
 function extractProductData(jsonData) {
-  let product = {
-    name: "Неизвестно",
-    link: jsonData?.seo?.link[0].href,
-    description: "Нет описания",
-    price: 0,
-    category: "Техника",
-    options: [],
-  };
+  const data = {};
 
-  // Ищем название продукта
-  const webHeadingPattern = /^webProductHeading-\d+-default-\d+$/;
-  const webHeadingKey = Object.keys(jsonData.widgetStates).find((key) =>
-    webHeadingPattern.test(key)
-  );
-
-  if (webHeadingKey) {
-    const innerJsonString = jsonData.widgetStates[webHeadingKey];
-    const innerData = JSON.parse(innerJsonString);
-    product.name = innerData.title;
+  if (jsonData.seo && typeof jsonData.seo.title === "string") {
+    let titleProduct = jsonData.seo.title;
+    titleProduct = titleProduct.split("купить")[0].trim();
+    data.name = titleProduct; // Название товара
+  } else {
+    data.name = "Название не найдено";
   }
 
-  // Ищем цену продукта
-  const keyPattern = /^webPrice-\d+-default-\d+$/;
-  const targetKey = Object.keys(jsonData.widgetStates).find((key) =>
-    keyPattern.test(key)
+  if (
+    jsonData.seo &&
+    Array.isArray(jsonData.seo.link) &&
+    jsonData.seo.link[0] &&
+    jsonData.seo.link[0].href
+  ) {
+    data.link = jsonData.seo.link[0].href;
+  } else {
+    data.link = "Ссылка не найдена";
+  }
+
+  const regexpWebCharacteristics = /^webCharacteristics-\d+-.*-\d+$/;
+
+  const targetWebCharacteristics = Object.keys(jsonData.widgetStates).find(
+    (key) => regexpWebCharacteristics.test(key),
   );
 
-  if (targetKey) {
-    const innerJsonString = jsonData.widgetStates[targetKey];
+  const webDescriptionsKeys = Object.keys(jsonData.widgetStates).filter((key) =>
+    /^webDescription-\d+-.*-\d+$/.test(key),
+  );
+
+  let textDescription = ""; // Храним описание
+  let foundRichAnnotation = false;
+  let foundRichAnnotationJson = false;
+
+  for (const key of webDescriptionsKeys) {
     try {
-      const innerData = JSON.parse(innerJsonString);
-      const price = innerData.price.replace(/[^\d]/g, '')
-      product.price = +price;
+      const parsed = JSON.parse(jsonData.widgetStates[key]);
+
+      if (parsed.richAnnotation) {
+        textDescription += parsed.richAnnotation + "\n\n"; // Добавляем с отступом
+        foundRichAnnotation = true;
+      }
+
+      if (parsed.richAnnotationJson && parsed.richAnnotationJson.content) {
+        parsed.richAnnotationJson.content.forEach((block) => {
+          block.blocks.forEach((item) => {
+            if (item.text && item.text.content) {
+              textDescription += item.text.content.join(" ") + "\n\n"; // Объединяем текстовые блоки
+            }
+          });
+        });
+        foundRichAnnotationJson = true;
+      }
+
+      if (foundRichAnnotation && foundRichAnnotationJson) break;
     } catch (error) {
-      console.error("Ошибка парсинга JSON:", error);
+      console.error("Ошибка парсинга описания:", key, error);
     }
   }
 
-  // Поиск описания товара
-  if (jsonData.seo && jsonData.seo.script) {
-    console.log(JSON.parse(jsonData.seo.script[0].innerHTML));
+  if (!textDescription.trim()) {
+    textDescription = "Описание отсутствует";
   }
 
-  // // Ищем все виджеты с характеристиками
-  // const wCharacteristicsPattern = /^webShortCharacteristics-\d+-default-\d+$/;
-  // const characteristicKeys = Object.keys(jsonData.widgetStates).filter((key) =>
-  //   wCharacteristicsPattern.test(key)
-  // );
+  data.description = textDescription.trim();
 
-  // if (characteristicKeys.length) {
-  //   characteristicKeys.forEach(key => {
-  //     const innerJsonString = jsonData.widgetStates[key];
-  //     try {
-  //       const innerData = JSON.parse(innerJsonString);
-  //       const characteristics = innerData.characteristics;
-  //       if (Array.isArray(characteristics)) {
-  //         characteristics.forEach(characteristic => {
-  //           // Проверяем наличие заголовка и собираем его текст
-  //           if (characteristic.title && characteristic.title.textRs) {
-  //             const titleChar = characteristic.title.textRs
-  //               .map(t => t.content)
-  //               .join(" ");
-  //             // Если у характеристики есть значения, объединяем их через запятую
-  //             if (characteristic.values) {
-  //               const valueChar = characteristic.values
-  //                 .map(value => (value.text ? value.text : "Не указано"))
-  //                 .join(", ");
-  //               product.options.push({ [titleChar]: valueChar });
-  //             }
-  //           }
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error("Ошибка парсинга JSON (характеристики):", error);
-  //     }
-  //   });
-  // }
+  if (targetWebCharacteristics) {
+    const innerJsonString = jsonData.widgetStates[targetWebCharacteristics];
+    console.log("📌 Найденный WebCharacteristics:", targetWebCharacteristics);
+    console.log("📌 JSON-строка:", innerJsonString);
+    const result = {};
+    try {
+      const innerData = JSON.parse(innerJsonString);
+      if (
+        innerData.characteristics &&
+        Array.isArray(innerData.characteristics)
+      ) {
+        innerData.characteristics.forEach((charBlock) => {
+          if (charBlock.short && Array.isArray(charBlock.short)) {
+            charBlock.short.forEach((item) => {
+              const key = item.name.trim();
+              а;
+              const value = item.values.map((v) => v.text).join(", ");
+              result[key] = value;
+            });
+          }
+        });
+      }
+      data.options = result;
+    } catch (error) {
+      console.error("❌ Ошибка при парсинге характеристик:", error);
+    }
+  } else {
+    data.options = {};
+  }
 
-  // // Ищем описание товара (например, в текстовом блоке)
-  // const wDescriptionPattern = /^textBlock-\d+-default-\d+$/;
-  // const descriptionKey = Object.keys(jsonData.widgetStates).find(key =>
-  //   wDescriptionPattern.test(key)
-  // );
+  data.formattedDescription = formatProductCharacteristics(data);
 
-  // if (descriptionKey) {
-  //   const descJsonString = jsonData.widgetStates[descriptionKey];
-  //   try {
-  //     const descData = JSON.parse(descJsonString);
-  //     if (descData && descData.text) {
-  //       product.description = descData.text;
-  //     }
-  //   } catch (error) {
-  //     console.error("Ошибка парсинга JSON (описание):", error);
-  //   }
-  // }
+  return data;
+}
 
+function formatProductCharacteristics(data) {
+  const optionsText = data.options
+    ? Object.entries(data.options)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(", ")
+    : "Опции не заданы";
 
-  return product;
+  return (
+    `Название: ${data.name}\n` +
+    `Описание: ${data.description}\n` +
+    `Опции: ${optionsText}`
+  );
 }
 
 export default extractProductData;

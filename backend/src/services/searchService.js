@@ -32,7 +32,6 @@ class SearchService {
         const siteParser = parser.getParser(site);
         const data = await siteParser.searchProducts(product.name);
 
-        console.log(data);
         for (const productData of data) {
           products.push({
             name: productData.name,
@@ -58,17 +57,15 @@ class SearchService {
       const parser = new Parser().getParser(site);
       const productData = await parser.searchByLink(productUrl);
 
-      
-      return productData;
-      // TODO:  Расскоменить код когд будет готов парсер.
-      // const similarProducts = await this.searchSimilarProducts(
-      //   productData,
-      //   site
-      // );
-      // return {
-      //   originalProduct: productData,
-      //   comparisons: similarProducts,
-      // };
+      const similarProducts = await this.searchSimilarProducts(
+        productData,
+        site,
+      );
+
+      return {
+        originalProduct: productData,
+        comparisons: similarProducts,
+      };
     }
   }
 }
