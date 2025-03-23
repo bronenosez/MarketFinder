@@ -1,7 +1,7 @@
 import driverPool from "./driverPool.js";
 import OzonParser from "./OzonParser.js";
 import WildberriesParser from "./WildberriesParser.js";
-import ApiError from "../utils/ApiError.js";
+import ApiError from "../ApiError.js";
 
 class Parser {
   constructor() {

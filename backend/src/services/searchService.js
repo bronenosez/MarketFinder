@@ -1,5 +1,5 @@
-import findMostSimilarProduct from "../utils/MatchFinder.js";
-import Parser from "../utils/parser.js";
+import findMostSimilarProduct from "../utils/Parser/MatchFinder.js";
+import Parser from "../utils/Parser/parser.js";
 
 class SearchService {
   static async searchProducts(productName) {

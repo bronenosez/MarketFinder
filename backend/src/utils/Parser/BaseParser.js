@@ -1,5 +1,3 @@
-import driverPool from "./driverPool.js";
-
 class BaseParser {
   constructor(driver, userAgent) {
     this.driver = driver;
