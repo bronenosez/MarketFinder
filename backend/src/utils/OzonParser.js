@@ -1,11 +1,9 @@
-import * as cheerio from "cheerio";
 import BaseParser from "./BaseParser.js";
 import tough from "tough-cookie";
 import { until, By } from "selenium-webdriver";
 import { wrapper } from "axios-cookiejar-support";
 import axios from "axios";
-import ApiError from "./ApiError.js";
-import extractProductData from "./parserJeskiy.js";
+import extractProductData from "./productDataExtractorOzon.js";
 
 class OzonParser extends BaseParser {
   async parseSeleniumCookies() {
@@ -14,9 +12,9 @@ class OzonParser extends BaseParser {
 
       await this.driver.wait(
         until.elementLocated(
-          By.xpath('//input[@placeholder="Искать на Ozon"]'),
+          By.xpath('//input[@placeholder="Искать на Ozon"]')
         ),
-        10000,
+        10000
       );
 
       const cookiesArray = await this.driver.manage().getCookies();
@@ -44,13 +42,13 @@ class OzonParser extends BaseParser {
   async searchProducts(productName) {
     const jarCookie = await this.parseJarCookies();
     const client = wrapper(
-      axios.create({ jar: jarCookie, withCredentials: true }),
+      axios.create({ jar: jarCookie, withCredentials: true })
     );
 
     try {
       let response = await client.get(
         `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=/search/?from_global=true&layout_page_index=1&page=1&paginator_token=3618992&search_page_state=vz6tCVi-i0M4KJtcGIx7V8QPI3G0hIIGeom1_eyH-ZEoZr2A-u-i1sT-j483qpTRocwHhTWswGXiADSSAWlhmc_qeDTgNKYJxqx8zXPKPFZEDAz33ciIlD9HJnJW&text=${encodeURIComponent(
-          productName,
+          productName
         )}`,
         {
           headers: {
@@ -70,7 +68,7 @@ class OzonParser extends BaseParser {
             "upgrade-insecure-requests": "1",
             "user-agent": this.userAgent,
           },
-        },
+        }
       );
       let widgetStatesKeys = Object.keys(response.data.widgetStates);
       const firstKey = widgetStatesKeys[0];
@@ -100,11 +98,10 @@ class OzonParser extends BaseParser {
   async searchByLink(productUrl) {
     const jarCookie = await this.parseJarCookies();
     const client = wrapper(
-      axios.create({ jar: jarCookie, withCredentials: true }),
+      axios.create({ jar: jarCookie, withCredentials: true })
     );
 
     productUrl = await this.extractPath(productUrl);
-    console.log(productUrl);
 
     try {
       let response = await client.get(
@@ -127,7 +124,7 @@ class OzonParser extends BaseParser {
             "upgrade-insecure-requests": "1",
             "user-agent": this.userAgent,
           },
-        },
+        }
       );
 
       let extractedProductData = extractProductData(response.data);
@@ -135,7 +132,6 @@ class OzonParser extends BaseParser {
       item.name = extractedProductData.name;
       item.link = extractedProductData.link;
       item.description = extractedProductData.formattedDescription;
-      console.log(item);
       return item;
     } catch (error) {
       throw error;

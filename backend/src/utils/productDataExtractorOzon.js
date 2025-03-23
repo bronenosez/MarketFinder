@@ -23,11 +23,11 @@ function extractProductData(jsonData) {
   const regexpWebCharacteristics = /^webCharacteristics-\d+-.*-\d+$/;
 
   const targetWebCharacteristics = Object.keys(jsonData.widgetStates).find(
-    (key) => regexpWebCharacteristics.test(key),
+    (key) => regexpWebCharacteristics.test(key)
   );
 
   const webDescriptionsKeys = Object.keys(jsonData.widgetStates).filter((key) =>
-    /^webDescription-\d+-.*-\d+$/.test(key),
+    /^webDescription-\d+-.*-\d+$/.test(key)
   );
 
   let textDescription = ""; // Храним описание
@@ -68,8 +68,7 @@ function extractProductData(jsonData) {
 
   if (targetWebCharacteristics) {
     const innerJsonString = jsonData.widgetStates[targetWebCharacteristics];
-    console.log("📌 Найденный WebCharacteristics:", targetWebCharacteristics);
-    console.log("📌 JSON-строка:", innerJsonString);
+
     const result = {};
     try {
       const innerData = JSON.parse(innerJsonString);
@@ -81,7 +80,6 @@ function extractProductData(jsonData) {
           if (charBlock.short && Array.isArray(charBlock.short)) {
             charBlock.short.forEach((item) => {
               const key = item.name.trim();
-              а;
               const value = item.values.map((v) => v.text).join(", ");
               result[key] = value;
             });

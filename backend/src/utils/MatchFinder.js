@@ -3,12 +3,21 @@ import cosineSimilarity from "cosine-similarity";
 
 const model = await pipeline(
   "feature-extraction",
-  "Xenova/paraphrase-multilingual-MiniLM-L12-v2",
+  "Xenova/paraphrase-multilingual-MiniLM-L12-v2"
 );
 
+const embeddingCache = new Map();
+
 async function getEmbedding(text) {
+  if (embeddingCache.has(text)) {
+    return embeddingCache.get(text);
+  }
+
   const output = await model(text, { pooling: "mean", normalize: true });
-  return output.data;
+  const embedding = output.data;
+
+  embeddingCache.set(text, embedding);
+  return embedding;
 }
 
 async function findMostSimilarProduct(query, products) {
